@@ -71,6 +71,8 @@ MonoBehaviour:
   - RPC_RemovePlayerFromLobby
   - RPC_RequestUpdatePlayerList
   - RPC_RemoveAllPlayerFromLobby
+  - RPC_PlayerListUpdate
+  - RPC_leaveRoom
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

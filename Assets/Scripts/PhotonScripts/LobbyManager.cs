@@ -7,223 +7,125 @@ using Photon.Realtime;
 using UnityEngine.SceneManagement;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
-{
-    public GameObject roomUI;
-    public GameObject lobbyUI;
-    public InputField roomInputField;
-    public Text roomName;
-
-    [Header("ServerInfo")]
-    public PHServer serverPrefab;           //servidor
-    public ControllerA ControllerPrefab;    //control del player
-
-    [Header("RoomList")]
-    public RoomListObj roomItemPf;
-    List<RoomListObj> roomListObjs = new List<RoomListObj>();
-    public Transform contentObject;
-
-    [Header("PlayerList")]
-    public bool isReady;
-    List<PlayerListObj> playerListObjs = new List<PlayerListObj>();
-    public PlayerListObj playerItemPf;
-    public Transform playerContentObject;
-
-    public Toggle isReadyToggle;
-    public float updateTimer = 1f;
-    public float nextUpdate;
+{ 
     Player _localPlayer;
-
+    Launcher _localLauncher;
+    bool isReady;
+    private float timer = 0;
+    public PlayerListObj playerItemPf;
+    public List<PlayerListObj> playerList = new List<PlayerListObj>();
     ExitGames.Client.Photon.Hashtable _customProperty = new ExitGames.Client.Photon.Hashtable();
 
-    void Start()
+    public int UpdateCount = 0;
+
+    //PHServer.serverInstance.RequestAddPlayerToLobby(_localPlayer);    //hacer el lobby manager un prefab
+    //PHServer.serverInstance.RequestUpdatePlayerList();
+    private void Start()
     {
-        _localPlayer = PhotonNetwork.LocalPlayer;
-        PhotonNetwork.JoinLobby();
+        _customProperty["isReady"] = isReady;
+        PhotonNetwork.SetPlayerCustomProperties(_customProperty);
+        _localLauncher = FindObjectOfType<Launcher>();
     }
 
-    public void onClickCreate()
+    private void Update()
     {
-        if(roomInputField.text.Length >=1)
+        if (Time.time >= timer)
         {
-            RoomOptions roomOptions = new RoomOptions();
-            roomOptions.MaxPlayers = 3;
-            roomOptions.BroadcastPropsChangeToAll = true;
-            PhotonNetwork.CreateRoom(roomInputField.text, roomOptions);
-        }
-    }
-
-    public override void OnJoinedRoom()
-    {
-        roomUI.SetActive(true);
-        lobbyUI.SetActive(false);
-        roomName.text = "ROOM: " + PhotonNetwork.CurrentRoom.Name;
-        
-        if (!PhotonNetwork.IsMasterClient) //si somos el server no queremos crearnos un controller
-        {
-            //quiero instanciarlo cuando empiezo el juego
-            //Instantiate(ControllerPrefab);  //toma los inputs del player
-            PHServer.serverInstance.RequestAddPlayerToLobby(_localPlayer, this);
             PHServer.serverInstance.RequestUpdatePlayerList();
-            isReadyToggle.gameObject.SetActive(true);
+            timer = Time.time + 1f;
         }
-        else //im master client
+    }
+
+    //se ejecuta en el servidor original y llama por el rpc al cliente local
+    public LobbyManager SetInitialParams(Player player)
+    {
+        _localPlayer = player;
+        isReady = false;
+        photonView.RPC("SetLocalParams", _localPlayer, isReady);
+        return this;
+    }
+
+    //se ejecuta en el cliente avatar que ejecuta este personaje
+    //se pueden agregar efector de spawn o particulas que solo ve el cliente local
+    [PunRPC]
+    void SetLocalParams(bool _isReady)
+    {
+        isReady = _isReady;
+    }
+
+    public void leaveRoom()
+    {
+        photonView.RPC("RPC_leaveRoom", _localPlayer);
+    }
+
+    [PunRPC]
+    public void RPC_leaveRoom()
+    {
+        foreach (var obj in playerList)
         {
-            isReadyToggle.gameObject.SetActive(false);
-        }
-    }
-
-    public override void OnCreatedRoom() //solo se llama al creador del primer cliente
-    {
-        PhotonNetwork.Instantiate(serverPrefab.name, Vector3.zero, Quaternion.identity);
-    }
-
-    public override void OnRoomListUpdate(List<RoomInfo> roomList)
-    {
-        if(Time.time >= nextUpdate)
-        {
-            UpdateRoomList(roomList);
-            nextUpdate = Time.time + updateTimer;
-        }
-    }
-
-    void UpdateRoomList(List<RoomInfo> rooms)
-    {
-        foreach(RoomListObj item in roomListObjs)
-        {
-            Destroy(item.gameObject);
+            Destroy(obj.gameObject);
         }
 
-        roomListObjs.Clear();
+        playerList.Clear();
 
-        foreach (RoomInfo room in rooms)
-        {
-            RoomListObj newRoom = Instantiate(roomItemPf, contentObject);
-            newRoom.SetRoomName(room.Name);
-            roomListObjs.Add(newRoom);
-        }
-    }
-
-    public void JoinRoom(string name)
-    {
-        PhotonNetwork.JoinRoom(name);
-    }
-
-    public void ServerCloseRoom() //cuando se desconecta el server saca a todos los jugadores del room
-    {
-        photonView.RPC("LeaveRoomOnServerDisconnect", RpcTarget.All);
-    }
-
-    public void OnClickLeaveRoom()
-    {
         PhotonNetwork.LeaveRoom();
     }
 
-    public void OnClickMainMenu()
+    public void PlayerListUpdate()
     {
-        PhotonNetwork.Disconnect();
-        SceneManager.LoadScene("MainMenu");
+        photonView.RPC("RPC_PlayerListUpdate", _localPlayer);
     }
 
-    public override void OnLeftRoom()
-    {
-        foreach(PlayerListObj item in playerListObjs)
+    [PunRPC]
+    public void RPC_PlayerListUpdate()
+    {     
+        foreach (var obj in playerList)
         {
-            Destroy(item.gameObject);
+            Destroy(obj.gameObject);
         }
 
-        playerListObjs.Clear();
+        playerList.Clear();
 
-        if (!PhotonNetwork.IsMasterClient)
+        foreach (var player in PhotonNetwork.PlayerList)  
         {
-            isReadyToggle.isOn = false;
-            isReady = false;
-            PhotonNetwork.SetPlayerCustomProperties(_customProperty);
-            PHServer.serverInstance.RequestRemoveAllPlayerFromLobby();
-        }
+            if (!player.IsMasterClient)
+            {
+                if (_localLauncher == null) return;
 
-        if (roomUI!= null)
-            roomUI.SetActive(false);
-        if (lobbyUI != null)
-            lobbyUI.SetActive(true);
-    }
-
-    public override void OnConnectedToMaster()
-    {
-        PhotonNetwork.JoinLobby();
-    }
-    
-    private void OnApplicationQuit()
-    {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            PHServer.serverInstance.RequestRemoveAllPlayerFromLobby();
+                PlayerListObj newPlayerListObj = Instantiate(playerItemPf, _localLauncher.playerListContainer);
+            
+                if(player.CustomProperties["isReady"] != null)
+                    newPlayerListObj.SetPlayerInfo(player, (bool)player.CustomProperties["isReady"]);
+                else
+                    newPlayerListObj.SetPlayerName(player.NickName);
+            
+                playerList.Add(newPlayerListObj);
+            }
         }
     }
 
-    public void isReadyToogle()
+
+    /*
+    public void ToggleIsReady()
     {
         isReady = !isReady;
         _customProperty["isReady"] = isReady;
         PhotonNetwork.SetPlayerCustomProperties(_customProperty);
+    }*/
 
-        for (int i = 0; i < playerListObjs.Count; i++)
+    /*
+        public void isReadyToogle()
         {
-            if (playerListObjs[i].playerName.text == _localPlayer.NickName)
+            for (int i = 0; i < playerListObjs.Count; i++)
             {
-                playerListObjs[i].SetPlayerReady(_localPlayer);
-                break;
+                if (playerListObjs[i].playerName.text == _localPlayer.NickName)
+                {
+                    playerListObjs[i].ToggleIsReady();
+                    break;
+                }
             }
-        }
-        
-    }
 
- //   [PunRPC]
-    public void PlayerListUpdate(List<Player> playersInRoom)
-    {
-        Debug.Log("updated players list");
-
-        foreach (PlayerListObj item in playerListObjs)
-        {
-            Destroy(item.gameObject);
-        }
-
-        playerListObjs.Clear();
-
-        if (PhotonNetwork.CurrentRoom == null) return;
-
-        //foreach (KeyValuePair<int,Player> player in PhotonNetwork.CurrentRoom.Players)
-        foreach (var player in playersInRoom)  
-        {
-            PlayerListObj newPlayerListObj = Instantiate(playerItemPf, playerContentObject);
-            newPlayerListObj.SetPlayerInfo(player);
-
-            if (player == PhotonNetwork.LocalPlayer)
-            {
-                newPlayerListObj.ApplyLocalChanges();
-            }
-            
-            playerListObjs.Add(newPlayerListObj);
-        }
-    }
-
-    //borrar
-    public void addPLayerToList()
-    {
-        /*
-        PlayerListObj thisPlayerObj = Instantiate(playerItemPf, playerContentObject);
-        thisPlayerObj.SetPlayerInfo(PhotonNetwork.LocalPlayer);
-
-        playerListObjs.Add(thisPlayerObj);
-        */
-        PHServer.serverInstance.RequestUpdatePlayerList();
-        //photonView.RPC("PlayerListUpdate", RpcTarget.All);
-    }
-    //borrar
-    public void removePlayerFromList(PlayerListObj item)
-    {
-        playerListObjs.Remove(item);
-        PHServer.serverInstance.RequestUpdatePlayerList();
-        //photonView.RPC("PlayerListUpdate", RpcTarget.All);
-    }
+            PHServer.serverInstance.RequestUpdatePlayerList();
+        }*/
 
 }

@@ -12,6 +12,7 @@ public class PHServer : MonoBehaviourPunCallbacks
     Player _phServer;
 
     [SerializeField] CharacterA _characterPrefab;
+    [SerializeField] LobbyManager _lobbyPf;
     [SerializeField] Transform _player1pos;
     [SerializeField] Transform _player2pos;
 
@@ -20,7 +21,7 @@ public class PHServer : MonoBehaviourPunCallbacks
     //si es asi tomo al character que lo representa y lo muevo
     Dictionary<Player, CharacterA> _dictionaryModels = new Dictionary<Player, CharacterA>();
 
-    Dictionary<Player, LobbyManager> _PlayersInLobby = new Dictionary<Player, LobbyManager>();
+    public Dictionary<Player, LobbyManager> _PlayersInLobby = new Dictionary<Player, LobbyManager>();
 
     public int PackagePerSecond { get; private set; }
 
@@ -33,13 +34,13 @@ public class PHServer : MonoBehaviourPunCallbacks
             if (photonView.IsMine)
             {
                 //cuando se conecte un cliente se va a ejecutar esta funcion, por eso usamos el target.allbuffered
-                photonView.RPC("SetServer", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer, 1);                
+                photonView.RPC("SetServer", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer);                
             }
         }
     }
 
     [PunRPC]
-    void SetServer(Player serverClient, int SceneIndex = 1)
+    void SetServer(Player serverClient)
     {
         if (serverInstance)
         {
@@ -51,28 +52,33 @@ public class PHServer : MonoBehaviourPunCallbacks
         _phServer = serverClient;
         PackagePerSecond = 60;
 
-        //PhotonNetwork.LoadLevel(SceneIndex);
-        /*
         if(PhotonNetwork.LocalPlayer != _phServer)
         {
             //photonView.RPC("AddPlayer", _phServer, PhotonNetwork.LocalPlayer);
             //add new player to list
 
             photonView.RPC("RPC_AddPlayerToLobby", _phServer, PhotonNetwork.LocalPlayer);
-        }*/
+        }
     }
 
     #region LOBBY OG
     
     [PunRPC]
-    void RPC_AddPlayerToLobby(Player newPlayer, LobbyManager lobbyManager)
+    void RPC_AddPlayerToLobby(Player newPlayer)
     {
-        _PlayersInLobby.Add(newPlayer, lobbyManager);
+        //StartCoroutine(AddPlayerToLobby(newPlayer));
+        LobbyManager newLobbyManager = PhotonNetwork.Instantiate(_lobbyPf.name, transform.position, Quaternion.identity)
+                                                                .GetComponent<LobbyManager>()
+                                                                .SetInitialParams(newPlayer);
+
+        _PlayersInLobby.Add(newPlayer, newLobbyManager);
     }
-    
+
+
     [PunRPC]
     void RPC_RemovePlayerFromLobby(Player newPlayer)
     {
+        _PlayersInLobby[newPlayer].leaveRoom();
         _PlayersInLobby.Remove(newPlayer);
     }
 
@@ -83,7 +89,7 @@ public class PHServer : MonoBehaviourPunCallbacks
 
         foreach (var player in _PlayersInLobby)
         {
-            player.Value.PlayerListUpdate(aux);
+            player.Value.PlayerListUpdate();
         }
     }
 
@@ -92,18 +98,19 @@ public class PHServer : MonoBehaviourPunCallbacks
     {
         foreach (var player in _PlayersInLobby)
         {
-            player.Value.OnClickLeaveRoom();
+            player.Value.leaveRoom();
         }
 
         _PlayersInLobby.Clear();
+        PhotonNetwork.LeaveRoom();
     }
 
     #endregion
 
     #region LOBBY AVATAR
-    public void RequestAddPlayerToLobby(Player player, LobbyManager lobbyManager)
+    public void RequestAddPlayerToLobby(Player player)
     {
-        photonView.RPC("RPC_AddPlayerToLobby", _phServer, player, lobbyManager);
+        photonView.RPC("RPC_AddPlayerToLobby", _phServer, player);
     }
 
     public void RequestRemovePlayerFromLobby(Player player)

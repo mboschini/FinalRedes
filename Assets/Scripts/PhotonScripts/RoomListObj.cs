@@ -1,3 +1,4 @@
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,16 +7,19 @@ using UnityEngine.UI;
 public class RoomListObj : MonoBehaviour
 {
     public Text roomName;
-    LobbyManager manager;
+    Launcher manager;
+    public RoomInfo roomInfo {get; private set;}
 
-    private void Start()
+    public RoomListObj SetRoomName(RoomInfo _room)
     {
-        manager = FindObjectOfType<LobbyManager>();
+        roomName.text = _room.Name;
+        roomInfo = _room;
+        return this;
     }
-
-    public void SetRoomName(string _roomName)
+    public RoomListObj SetLauncher(Launcher launch)
     {
-        roomName.text = _roomName;
+        manager = launch;
+        return this;
     }
 
     public void OnClickRoomItem()

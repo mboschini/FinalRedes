@@ -7,31 +7,25 @@ public class PlayerListObj : MonoBehaviourPunCallbacks
 {
     public Image BG;
     public Text playerName;
-    public bool ready;
+    public bool isReady;
     Color originalColor;
+    
 
     private void Start()
     {
-        originalColor = BG.color;
+        BG.color = originalColor;
     }
 
-    public void SetPlayerInfo(Player _player)
+    public void SetPlayerInfo(Player _player, bool _isReady = false)
     {
         playerName.text = _player.NickName;
+        isReady = _isReady;
         UpdatePlayerItem(_player);
     }
 
-    public void SetPlayerReady(Player _player)
+    public void SetPlayerName(string _player)
     {
-        UpdatePlayerItem(_player);
-    }
-
-    public void ApplyLocalChanges()
-    {
-        if (ready)
-            BG.color = Color.green;
-        else
-            BG.color = originalColor;
+        playerName.text = _player;
     }
 
     public override void OnPlayerPropertiesUpdate(Player target, ExitGames.Client.Photon.Hashtable changedProps)
@@ -42,9 +36,15 @@ public class PlayerListObj : MonoBehaviourPunCallbacks
         }
     }
 
-    void UpdatePlayerItem(Player player)
+    public void UpdatePlayerItem(Player player)
     {
-        ready = (bool)player.CustomProperties["isReady"];
-        ApplyLocalChanges();
+        if(player.CustomProperties != null)
+        {
+            if ((bool)player.CustomProperties["isReady"])
+                BG.color = Color.green;
+            else
+                BG.color = originalColor;
+        }
     }
+
 }
