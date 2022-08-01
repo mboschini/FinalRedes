@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
@@ -21,7 +22,10 @@ public class PHServer : MonoBehaviourPunCallbacks
     //si es asi tomo al character que lo representa y lo muevo
     Dictionary<Player, CharacterA> _dictionaryModels = new Dictionary<Player, CharacterA>();
 
-    public Dictionary<Player, LobbyManager> _PlayersInLobby = new Dictionary<Player, LobbyManager>();
+    Dictionary<Player, LobbyManager> _PlayersInLobby = new Dictionary<Player, LobbyManager>();
+
+    [SerializeField] float playersCheckIn = 0;
+    [SerializeField] float playersInLobby = 0;
 
     public int PackagePerSecond { get; private set; }
 
@@ -39,6 +43,11 @@ public class PHServer : MonoBehaviourPunCallbacks
         }
     }
 
+    private void Update()
+    {
+        playersInLobby = _PlayersInLobby.Count();
+    }
+
     [PunRPC]
     void SetServer(Player serverClient)
     {
@@ -54,19 +63,34 @@ public class PHServer : MonoBehaviourPunCallbacks
 
         if(PhotonNetwork.LocalPlayer != _phServer)
         {
-            //photonView.RPC("AddPlayer", _phServer, PhotonNetwork.LocalPlayer);
-            //add new player to list
-
             photonView.RPC("RPC_AddPlayerToLobby", _phServer, PhotonNetwork.LocalPlayer);
         }
     }
 
     #region LOBBY OG
-    
+
+    [PunRPC]
+    void RPC_StartGame()
+    {
+        PhotonNetwork.CurrentRoom.IsOpen = false;
+
+        foreach (var player in _PlayersInLobby)
+        {
+            player.Value.CreateMyController();
+            player.Value.enabled = false;
+
+        }
+
+        foreach (var player in _PlayersInLobby)
+        {
+            SceneManager.LoadScene("GameScene");
+            StartCoroutine(waitForLevel(player.Key));
+        }
+    }
+
     [PunRPC]
     void RPC_AddPlayerToLobby(Player newPlayer)
     {
-        //StartCoroutine(AddPlayerToLobby(newPlayer));
         LobbyManager newLobbyManager = PhotonNetwork.Instantiate(_lobbyPf.name, transform.position, Quaternion.identity)
                                                                 .GetComponent<LobbyManager>()
                                                                 .SetInitialParams(newPlayer);
@@ -80,16 +104,20 @@ public class PHServer : MonoBehaviourPunCallbacks
     {
         _PlayersInLobby[newPlayer].leaveRoom();
         _PlayersInLobby.Remove(newPlayer);
+        photonView.RPC("RPC_CheckInPlayer", _phServer, false);
     }
 
     [PunRPC]
     void RPC_RequestUpdatePlayerList()
     {
-        List<Player> aux = _PlayersInLobby.Select(x=> x.Key).ToList();
-
-        foreach (var player in _PlayersInLobby)
+        if (playersCheckIn < 2)
         {
-            player.Value.PlayerListUpdate();
+            List<Player> aux = _PlayersInLobby.Select(x=> x.Key).ToList();
+
+            foreach (var player in _PlayersInLobby)
+            {
+                player.Value.PlayerListUpdate();
+            }
         }
     }
 
@@ -105,9 +133,49 @@ public class PHServer : MonoBehaviourPunCallbacks
         PhotonNetwork.LeaveRoom();
     }
 
+    [PunRPC]
+    void RPC_RequestCheckIsReady(Player playerRequest)
+    {
+        _PlayersInLobby[playerRequest].CheckIn();
+
+    }
+
+    [PunRPC]
+    void RPC_CheckInPlayer(bool Checked)
+    {
+        if (Checked)
+        {
+            playersCheckIn += 1;
+            if (playersCheckIn > 2)
+                playersCheckIn = 2;
+        }
+        else
+        {
+            playersCheckIn -= 1;
+            if (playersCheckIn < 0)
+                playersCheckIn = 0;
+        }
+
+        if (playersCheckIn == 2)
+            FindObjectOfType<Launcher>().ToogleStartGame(true);
+        else
+            FindObjectOfType<Launcher>().ToogleStartGame(false);
+    }
+
     #endregion
 
     #region LOBBY AVATAR
+
+    public void CheckInPlayer(bool Checked) 
+    {
+        photonView.RPC("RPC_CheckInPlayer", _phServer, Checked);
+    }
+
+    public void RequestCheckIsReady(Player player)
+    {
+        photonView.RPC("RPC_RequestCheckIsReady", _phServer, player);
+    }
+
     public void RequestAddPlayerToLobby(Player player)
     {
         photonView.RPC("RPC_AddPlayerToLobby", _phServer, player);
@@ -131,12 +199,6 @@ public class PHServer : MonoBehaviourPunCallbacks
 
     #endregion
 
-
-    [PunRPC]
-    void AddPlayer(Player newPlayer)
-    {
-        StartCoroutine(waitForLevel(newPlayer));
-    }
 
     IEnumerator waitForLevel(Player newPlayer)
     {
@@ -165,6 +227,11 @@ public class PHServer : MonoBehaviourPunCallbacks
     }
 
     #region Request que reciben los servidores avatares
+
+    public void RequestStartGame()
+    { 
+        photonView.RPC("RPC_StartGame", _phServer);
+    }
 
     public void RequestMove(Player player, float dirHorizontal, float dirForward)
     {

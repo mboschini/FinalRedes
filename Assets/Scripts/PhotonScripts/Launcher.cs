@@ -16,6 +16,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     public GameObject LobbyUI;
     public GameObject RoomUI;
     public GameObject MainMenuUI;
+    public Button StartButton;
     public Toggle isReadyToogle;
 
     [Header("RoomList")]
@@ -121,6 +122,12 @@ public class Launcher : MonoBehaviourPunCallbacks
             }
             else
             {
+                for(int i=0; i < roomListObjs.Count; i++)
+                {
+                    if (room.Name == roomListObjs[i].name)
+                        return;
+                }
+
                 RoomListObj newRoom = Instantiate(roomItemPf, roomListContainer)
                             .SetRoomName(room)
                             .SetLauncher(this);
@@ -147,6 +154,29 @@ public class Launcher : MonoBehaviourPunCallbacks
     public void JoinRoom(string name)
     {
         PhotonNetwork.JoinRoom(name);
+    }
+
+    public void BTN_isReady()
+    {
+        PHServer.serverInstance.RequestCheckIsReady(PhotonNetwork.LocalPlayer);
+    }
+
+    public void BTN_StartGame()
+    {
+        PHServer.serverInstance.RequestStartGame();
+    }
+
+    public void ToogleStartGame(bool toogle)
+    {
+        StartButton.interactable = toogle;
+    }
+
+    public void CreateControllers()
+    {
+        if (!PhotonNetwork.IsMasterClient) //si somos el server no queremos crearnos un controller
+        {
+            Instantiate(controllerPf);  //toma los inputs del player
+        }
     }
 
     public void BTN_Exit()

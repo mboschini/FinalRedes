@@ -4,22 +4,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
-using UnityEngine.SceneManagement;
+
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 { 
     Player _localPlayer;
     Launcher _localLauncher;
-    bool isReady;
     private float timer = 0;
+    public bool isReady;
     public PlayerListObj playerItemPf;
     public List<PlayerListObj> playerList = new List<PlayerListObj>();
     ExitGames.Client.Photon.Hashtable _customProperty = new ExitGames.Client.Photon.Hashtable();
 
-    public int UpdateCount = 0;
-
-    //PHServer.serverInstance.RequestAddPlayerToLobby(_localPlayer);    //hacer el lobby manager un prefab
-    //PHServer.serverInstance.RequestUpdatePlayerList();
     private void Start()
     {
         _customProperty["isReady"] = isReady;
@@ -32,7 +28,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         if (Time.time >= timer)
         {
             PHServer.serverInstance.RequestUpdatePlayerList();
-            timer = Time.time + 1f;
+            timer = Time.time + 2f;
         }
     }
 
@@ -104,28 +100,30 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public void CheckIn() 
+    {
+        photonView.RPC("RPC_ToggleIsReady", _localPlayer);
+    }
 
-    /*
-    public void ToggleIsReady()
+    [PunRPC]
+    public void RPC_ToggleIsReady()
     {
         isReady = !isReady;
         _customProperty["isReady"] = isReady;
         PhotonNetwork.SetPlayerCustomProperties(_customProperty);
-    }*/
+        PHServer.serverInstance.CheckInPlayer(isReady);
+    }
 
-    /*
-        public void isReadyToogle()
-        {
-            for (int i = 0; i < playerListObjs.Count; i++)
-            {
-                if (playerListObjs[i].playerName.text == _localPlayer.NickName)
-                {
-                    playerListObjs[i].ToggleIsReady();
-                    break;
-                }
-            }
+    public void CreateMyController()
+    {
+        photonView.RPC("RPC_CreateMyController", _localPlayer);
+        PhotonNetwork.SendAllOutgoingCommands();
+    }
 
-            PHServer.serverInstance.RequestUpdatePlayerList();
-        }*/
+    [PunRPC]
+    public void RPC_CreateMyController()
+    {
+        //_localLauncher.CreateControllers();
+    }
 
 }

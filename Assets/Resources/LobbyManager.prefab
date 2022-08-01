@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3188015430443563849}
   - component: {fileID: 3188015430443563850}
-  - component: {fileID: 3188015430443563848}
+  - component: {fileID: 5194868092902040927}
   m_Layer: 0
   m_Name: LobbyManager
   m_TagString: Untagged
@@ -44,10 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a20a6abd65bdf9f46917aeefb73b0a58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isReady: 0
   playerItemPf: {fileID: 7833423664187825170, guid: 392f335bc3386904fbd4918bacef0d8b, type: 3}
   playerList: []
-  UpdateCount: 0
---- !u!114 &3188015430443563848
+--- !u!114 &5194868092902040927
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

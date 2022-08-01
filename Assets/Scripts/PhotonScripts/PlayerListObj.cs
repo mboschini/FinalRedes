@@ -13,7 +13,10 @@ public class PlayerListObj : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        BG.color = originalColor;
+        if(isReady)
+            BG.color = Color.green;
+        else
+            BG.color = originalColor;
     }
 
     public void SetPlayerInfo(Player _player, bool _isReady = false)
