@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class RoomListObj : MonoBehaviour
 {
     public Text roomName;
+    public Button thisButton;
     Launcher manager;
     public RoomInfo roomInfo {get; private set;}
 
@@ -14,6 +15,7 @@ public class RoomListObj : MonoBehaviour
     {
         roomName.text = _room.Name;
         roomInfo = _room;
+        thisButton.interactable = true;
         return this;
     }
     public RoomListObj SetLauncher(Launcher launch)
@@ -24,6 +26,7 @@ public class RoomListObj : MonoBehaviour
 
     public void OnClickRoomItem()
     {
+        thisButton.interactable = false;
         manager.JoinRoom(roomName.text);
     }
 }

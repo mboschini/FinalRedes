@@ -17,6 +17,8 @@ public class Launcher : MonoBehaviourPunCallbacks
     public GameObject RoomUI;
     public GameObject MainMenuUI;
     public Button StartButton;
+    public Button LeaveRoomButton;
+    public Button CreateRoomButton;
     public Toggle isReadyToogle;
 
     [Header("RoomList")]
@@ -82,6 +84,7 @@ public class Launcher : MonoBehaviourPunCallbacks
         RoomUI.SetActive(true);
         LobbyUI.SetActive(false);
         MainMenuUI.SetActive(false);
+        LeaveRoomButton.interactable = true;
         roomName.text = "ROOM: " + PhotonNetwork.CurrentRoom.Name;
 
         if (!PhotonNetwork.IsMasterClient) //si somos el server no queremos crearnos un controller
@@ -109,30 +112,19 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public void BTN_UpdateRoomList()
     {
+        foreach (var room in roomListObjs)
+        {
+            Destroy(room.gameObject);
+        }
+
+        roomListObjs.Clear();
+
         foreach (RoomInfo room in _roomsUpdates)
         {
-            if (room.RemovedFromList)
-            {
-                int index = roomListObjs.FindIndex(x => x.roomInfo.Name == room.Name);
-                if(index != -1)
-                {
-                    Destroy(roomListObjs[index].gameObject);
-                    roomListObjs.RemoveAt(index);
-                }
-            }
-            else
-            {
-                for(int i=0; i < roomListObjs.Count; i++)
-                {
-                    if (room.Name == roomListObjs[i].name)
-                        return;
-                }
-
-                RoomListObj newRoom = Instantiate(roomItemPf, roomListContainer)
-                            .SetRoomName(room)
-                            .SetLauncher(this);
-                roomListObjs.Add(newRoom);
-            }
+            RoomListObj newRoom = Instantiate(roomItemPf, roomListContainer)
+                        .SetRoomName(room)
+                        .SetLauncher(this);
+            roomListObjs.Add(newRoom);
         }
     }
 
@@ -141,6 +133,8 @@ public class Launcher : MonoBehaviourPunCallbacks
         isReadyToogle.isOn = false;
         RoomUI.SetActive(false);
         LobbyUI.SetActive(true);
+        CreateRoomButton.interactable = true;
+        BTN_UpdateRoomList();
     }
 
     public void BTN_MainMenu()

@@ -38,7 +38,7 @@ public class PHServer : MonoBehaviourPunCallbacks
             if (photonView.IsMine)
             {
                 //cuando se conecte un cliente se va a ejecutar esta funcion, por eso usamos el target.allbuffered
-                photonView.RPC("SetServer", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer);                
+                photonView.RPC("SetServer", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer);
             }
         }
     }
@@ -61,7 +61,7 @@ public class PHServer : MonoBehaviourPunCallbacks
         _phServer = serverClient;
         PackagePerSecond = 60;
 
-        if(PhotonNetwork.LocalPlayer != _phServer)
+        if (PhotonNetwork.LocalPlayer != _phServer)
         {
             photonView.RPC("RPC_AddPlayerToLobby", _phServer, PhotonNetwork.LocalPlayer);
         }
@@ -72,20 +72,20 @@ public class PHServer : MonoBehaviourPunCallbacks
     [PunRPC]
     void RPC_StartGame()
     {
-        PhotonNetwork.CurrentRoom.IsOpen = false;
+        PhotonNetwork.LoadLevel("GameScene");
 
-        foreach (var player in _PlayersInLobby)
+        if(PhotonNetwork.LocalPlayer == _phServer)
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+        else
         {
-            player.Value.CreateMyController();
-            player.Value.enabled = false;
-
+            photonView.RPC("RPC_AddPlayerToGame", _phServer, PhotonNetwork.LocalPlayer);
         }
+    }
 
-        foreach (var player in _PlayersInLobby)
-        {
-            SceneManager.LoadScene("GameScene");
-            StartCoroutine(waitForLevel(player.Key));
-        }
+    [PunRPC]
+    void RPC_AddPlayerToGame(Player player) 
+    {
+        StartCoroutine(waitForLevel(player));
     }
 
     [PunRPC]
@@ -103,6 +103,7 @@ public class PHServer : MonoBehaviourPunCallbacks
     void RPC_RemovePlayerFromLobby(Player newPlayer)
     {
         _PlayersInLobby[newPlayer].leaveRoom();
+        PhotonNetwork.Destroy(_PlayersInLobby[newPlayer].GetComponent<LobbyManager>().photonView);
         _PlayersInLobby.Remove(newPlayer);
         photonView.RPC("RPC_CheckInPlayer", _phServer, false);
     }
@@ -197,8 +198,6 @@ public class PHServer : MonoBehaviourPunCallbacks
         photonView.RPC("RPC_RequestUpdatePlayerList", _phServer);
     }
 
-    #endregion
-
 
     IEnumerator waitForLevel(Player newPlayer)
     {
@@ -209,7 +208,7 @@ public class PHServer : MonoBehaviourPunCallbacks
 
         //se ejecuta en el servidor original, por lo que se puede tener un manager que gestione las posiciones
         //de todos los players y se llamaria desde aca.
-        if (_dictionaryModels.Count == 0)
+        if (_dictionaryModels.Count % 2 == 0)
         {
             CharacterA newCharacter = PhotonNetwork.Instantiate(_characterPrefab.name, _player1pos.position, _player1pos.rotation)
                                                                 .GetComponent<CharacterA>()
@@ -226,11 +225,23 @@ public class PHServer : MonoBehaviourPunCallbacks
 
     }
 
+    [PunRPC]
+    void RPC_CreateControlls()
+    {
+        foreach (var player in _PlayersInLobby)
+        {
+            player.Value.CreateMyController();
+        }
+    }
+    #endregion
+
+
     #region Request que reciben los servidores avatares
 
     public void RequestStartGame()
-    { 
-        photonView.RPC("RPC_StartGame", _phServer);
+    {
+        photonView.RPC("RPC_CreateControlls", _phServer);
+        photonView.RPC("RPC_StartGame", RpcTarget.All);
     }
 
     public void RequestMove(Player player, float dirHorizontal, float dirForward)
@@ -361,7 +372,8 @@ public class PHServer : MonoBehaviourPunCallbacks
     [PunRPC]
     public void RPC_Disconnect(Player player)
     {
-        PhotonNetwork.Destroy(_dictionaryModels[player].gameObject);
+        if(_dictionaryModels[player] != null)
+            PhotonNetwork.Destroy(_dictionaryModels[player].gameObject);
         _dictionaryModels.Remove(player);
     }
     #endregion

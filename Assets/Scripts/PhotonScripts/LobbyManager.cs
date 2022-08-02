@@ -117,13 +117,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public void CreateMyController()
     {
         photonView.RPC("RPC_CreateMyController", _localPlayer);
-        PhotonNetwork.SendAllOutgoingCommands();
     }
 
     [PunRPC]
     public void RPC_CreateMyController()
     {
-        //_localLauncher.CreateControllers();
+        _localLauncher.CreateControllers();
     }
-
 }

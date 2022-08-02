@@ -79,6 +79,10 @@ MonoBehaviour:
   - RPC_StartGame
   - RPC_CreateMyController
   - RPC_RequestDeleteLobbyManager
+  - RPC_LoadGame
+  - RPC_StartGameForAll
+  - RPC_AddPlayerToGame
+  - RPC_CreateControlls
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

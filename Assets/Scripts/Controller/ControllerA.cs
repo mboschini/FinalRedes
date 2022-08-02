@@ -27,6 +27,12 @@ public class ControllerA : MonoBehaviourPun
 
     void Update()
     {
+        if (PHServer.serverInstance == null)
+        {
+            PhotonNetwork.Disconnect();
+            Application.Quit();
+        }
+
         //move
         _z = Input.GetAxis("Vertical");
         _x = Input.GetAxis("Horizontal");
