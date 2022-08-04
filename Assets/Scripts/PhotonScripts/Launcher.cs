@@ -129,12 +129,14 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public void BTN_UpdateRoomList()
     {
+        /*
         foreach (var room in roomListObjs)
         {
             Destroy(room.gameObject);
         }
 
         roomListObjs.Clear();
+
 
         foreach (RoomInfo room in _roomsUpdates)
         {
@@ -143,6 +145,29 @@ public class Launcher : MonoBehaviourPunCallbacks
                         .SetLauncher(this);
             roomListObjs.Add(newRoom);
         }
+        */
+        foreach (RoomInfo room in _roomsUpdates)
+        {
+            if (room.RemovedFromList)
+            {
+                int index = roomListObjs.FindIndex(x => x.roomInfo.Name == room.Name);
+                if (index != -1)
+                {
+                    Destroy(roomListObjs[index].gameObject);
+                    roomListObjs.RemoveAt(index);
+                }
+            }
+            else if (roomListObjs.FindIndex(x => x.roomInfo.Name == room.Name) != -1)
+                return;
+            else
+            {
+                RoomListObj newRoom = Instantiate(roomItemPf, roomListContainer)
+                        .SetRoomName(room)
+                        .SetLauncher(this);
+                roomListObjs.Add(newRoom);
+            }
+        }
+            
     }
 
     public override void OnLeftRoom()
