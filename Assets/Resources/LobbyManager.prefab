@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a20a6abd65bdf9f46917aeefb73b0a58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _localLauncher: {fileID: 0}
   isReady: 0
   playerItemPf: {fileID: 7833423664187825170, guid: 392f335bc3386904fbd4918bacef0d8b, type: 3}
   playerList: []

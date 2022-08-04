@@ -5229,6 +5229,7 @@ MonoBehaviour:
   InputField: {fileID: 982568667}
   roomInputField: {fileID: 1703668184}
   roomName: {fileID: 264792512}
+  playerList: {fileID: 1830468887}
   loadingBar: {fileID: 1797518165}
   LobbyUI: {fileID: 696371424}
   RoomUI: {fileID: 284421157}

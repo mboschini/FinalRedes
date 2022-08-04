@@ -12,6 +12,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     public InputField InputField;
     public InputField roomInputField;
     public Text roomName;
+    public GameObject playerList;
     public GameObject loadingBar;
     public GameObject LobbyUI;
     public GameObject RoomUI;
@@ -85,17 +86,33 @@ public class Launcher : MonoBehaviourPunCallbacks
         LobbyUI.SetActive(false);
         MainMenuUI.SetActive(false);
         LeaveRoomButton.interactable = true;
-        roomName.text = "ROOM: " + PhotonNetwork.CurrentRoom.Name;
+        roomName.text = "ROOM: " + PhotonNetwork.CurrentRoom.Name + " (" + (PhotonNetwork.CurrentRoom.Players.Count - 1) + "/" + (PhotonNetwork.CurrentRoom.MaxPlayers - 1) + ")";
 
         if (!PhotonNetwork.IsMasterClient) //si somos el server no queremos crearnos un controller
         {
-            //quiero instanciarlo cuando empiezo el juego
-            //Instantiate(ControllerPrefab);  //toma los inputs del player
-            isReadyToogle.gameObject.SetActive(true);
+            StartButton.gameObject.SetActive(false);
         }
         else //im master client
         {
             isReadyToogle.gameObject.SetActive(false);
+            playerList.gameObject.SetActive(false);
+        }
+    }
+
+    public void UpdateRoomTitle(int players)
+    {
+        roomName.text = "ROOM: " + PhotonNetwork.CurrentRoom.Name + " (" + players + "/" + (PhotonNetwork.CurrentRoom.MaxPlayers - 1) + ")";
+
+        if (PhotonNetwork.IsMasterClient) return;
+
+        if (PhotonNetwork.CurrentRoom.Players.Count == PhotonNetwork.CurrentRoom.MaxPlayers)
+        {
+            isReadyToogle.interactable = true;
+        }
+        else
+        {
+            isReadyToogle.isOn = false;
+            isReadyToogle.interactable = false;
         }
     }
 
@@ -142,6 +159,7 @@ public class Launcher : MonoBehaviourPunCallbacks
         RoomUI.SetActive(false);
         LobbyUI.SetActive(false);
         MainMenuUI.SetActive(true);
+        CreateRoomButton.interactable = true;
         PhotonNetwork.Disconnect();
     }
 

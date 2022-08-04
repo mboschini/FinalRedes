@@ -41,13 +41,13 @@ public class PlayerListObj : MonoBehaviourPunCallbacks
 
     public void UpdatePlayerItem(Player player)
     {
-        if(player.CustomProperties != null)
-        {
+        //if(player.CustomProperties != null)
+        //{
             if ((bool)player.CustomProperties["isReady"])
                 BG.color = Color.green;
             else
                 BG.color = originalColor;
-        }
+        //}
     }
 
 }

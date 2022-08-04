@@ -9,7 +9,7 @@ using Photon.Realtime;
 public class LobbyManager : MonoBehaviourPunCallbacks
 { 
     Player _localPlayer;
-    Launcher _localLauncher;
+    public Launcher _localLauncher;
     private float timer = 0;
     public bool isReady;
     public PlayerListObj playerItemPf;
@@ -98,6 +98,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                 playerList.Add(newPlayerListObj);
             }
         }
+
+        _localLauncher.UpdateRoomTitle(PhotonNetwork.PlayerList.Length-1);
     }
 
     public void CheckIn() 

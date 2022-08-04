@@ -11,6 +11,7 @@ public class PHServer : MonoBehaviourPunCallbacks
     public static PHServer serverInstance;
 
     Player _phServer;
+    Launcher _localLauncher;
 
     [SerializeField] CharacterA _characterPrefab;
     [SerializeField] LobbyManager _lobbyPf;
@@ -25,7 +26,6 @@ public class PHServer : MonoBehaviourPunCallbacks
     Dictionary<Player, LobbyManager> _PlayersInLobby = new Dictionary<Player, LobbyManager>();
 
     [SerializeField] float playersCheckIn = 0;
-    [SerializeField] float playersInLobby = 0;
 
     public int PackagePerSecond { get; private set; }
 
@@ -39,13 +39,9 @@ public class PHServer : MonoBehaviourPunCallbacks
             {
                 //cuando se conecte un cliente se va a ejecutar esta funcion, por eso usamos el target.allbuffered
                 photonView.RPC("SetServer", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer);
+                _localLauncher = FindObjectOfType<Launcher>();
             }
         }
-    }
-
-    private void Update()
-    {
-        playersInLobby = _PlayersInLobby.Count();
     }
 
     [PunRPC]
@@ -96,8 +92,8 @@ public class PHServer : MonoBehaviourPunCallbacks
                                                                 .SetInitialParams(newPlayer);
 
         _PlayersInLobby.Add(newPlayer, newLobbyManager);
+        _localLauncher.UpdateRoomTitle(_PlayersInLobby.Count);
     }
-
 
     [PunRPC]
     void RPC_RemovePlayerFromLobby(Player newPlayer)
@@ -105,20 +101,18 @@ public class PHServer : MonoBehaviourPunCallbacks
         _PlayersInLobby[newPlayer].leaveRoom();
         PhotonNetwork.Destroy(_PlayersInLobby[newPlayer].GetComponent<LobbyManager>().photonView);
         _PlayersInLobby.Remove(newPlayer);
+        _localLauncher.UpdateRoomTitle(_PlayersInLobby.Count);
         photonView.RPC("RPC_CheckInPlayer", _phServer, false);
     }
 
     [PunRPC]
     void RPC_RequestUpdatePlayerList()
     {
-        if (playersCheckIn < 2)
-        {
-            List<Player> aux = _PlayersInLobby.Select(x=> x.Key).ToList();
+        List<Player> aux = _PlayersInLobby.Select(x=> x.Key).ToList();
 
-            foreach (var player in _PlayersInLobby)
-            {
-                player.Value.PlayerListUpdate();
-            }
+        foreach (var player in _PlayersInLobby)
+        {
+            player.Value.PlayerListUpdate();
         }
     }
 
@@ -138,7 +132,6 @@ public class PHServer : MonoBehaviourPunCallbacks
     void RPC_RequestCheckIsReady(Player playerRequest)
     {
         _PlayersInLobby[playerRequest].CheckIn();
-
     }
 
     [PunRPC]
@@ -158,9 +151,9 @@ public class PHServer : MonoBehaviourPunCallbacks
         }
 
         if (playersCheckIn == 2)
-            FindObjectOfType<Launcher>().ToogleStartGame(true);
+            _localLauncher.ToogleStartGame(true);
         else
-            FindObjectOfType<Launcher>().ToogleStartGame(false);
+            _localLauncher.ToogleStartGame(false);
     }
 
     #endregion
