@@ -5,7 +5,7 @@ using System;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class CharacterA : MonoBehaviourPun, IPunObservable
+public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
 {
     Player _owner;
     [SerializeField] Rigidbody _rb;
@@ -147,7 +147,11 @@ public class CharacterA : MonoBehaviourPun, IPunObservable
         {
             Debug.DrawRay(cameraView.transform.position, cameraView.transform.forward * hit.distance, Color.yellow, 1f);
             Debug.Log("Did Hit " + hit.transform.gameObject.name);
-            hit.transform.gameObject.GetComponent<CharacterA>().TakeDamage(_dmg);
+
+            if (hit.transform.gameObject.GetComponent<IDamageable>() != null)
+            {
+                hit.transform.gameObject.GetComponent<IDamageable>().TakeDamage(_dmg);
+            }
         }
         else
         {
@@ -185,12 +189,18 @@ public class CharacterA : MonoBehaviourPun, IPunObservable
 
         if (_currentLife <= 0)
         {
-            PHServer.serverInstance.RequestLose(_owner);
-        }/*
+            Die();
+        }
+        /*
         else
         {
             photonView.RPC("RPC_LifeChange", _owner, _currentLife);
         }*/
+    }
+
+    public void Die()
+    {
+        PHServer.serverInstance.RequestLose(_owner);
     }
 
     public void ShowTabScreen()
@@ -263,5 +273,10 @@ public class CharacterA : MonoBehaviourPun, IPunObservable
 
             lifeBar.UpdateBar(_currentLife / _maxLife);
         }
+    }
+
+    public float GetHP()
+    {
+        return _currentLife;
     }
 }
