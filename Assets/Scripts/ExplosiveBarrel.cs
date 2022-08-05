@@ -17,7 +17,7 @@ public class ExplosiveBarrel : MonoBehaviourPun, IDamageable
     {
         if (photonView.IsMine)
         {
-            source.PlayOneShot(explode);
+            
             yield return new WaitForSeconds(1f);
 
             Collider[] col = Physics.OverlapSphere(transform.position, 7f, PlayerLayer, QueryTriggerInteraction.Ignore);
@@ -61,5 +61,10 @@ public class ExplosiveBarrel : MonoBehaviourPun, IDamageable
     {
         animator.SetTrigger("Explode");
         StartCoroutine(Explode());
+    }
+
+    public void AnimPlayExplosionSFX()
+    {
+        source.PlayOneShot(explode);
     }
 }
