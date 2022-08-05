@@ -17,6 +17,7 @@ public class ControllerA : MonoBehaviourPun
     float granadeCDtimer = 0;
     bool canShootGrande = true;
     float timer;
+    bool gameEnd = false;
 
     void Start()
     {
@@ -32,6 +33,8 @@ public class ControllerA : MonoBehaviourPun
             PhotonNetwork.Disconnect();
             Application.Quit();
         }
+
+        if (gameEnd) return;
 
         //move
         _z = Input.GetAxis("Vertical");
@@ -89,6 +92,8 @@ public class ControllerA : MonoBehaviourPun
 
     private void FixedUpdate()
     {
+        if (gameEnd) return;
+
         timer += Time.fixedDeltaTime;
 
         if (_x != 0 || _z != 0)
@@ -106,6 +111,11 @@ public class ControllerA : MonoBehaviourPun
         }
     }
 
+    public void SetEndGame()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        gameEnd = true;
+    }
 
     private void OnApplicationQuit()
     {

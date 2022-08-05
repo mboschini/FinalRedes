@@ -134,7 +134,7 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
 
     public void Shoot()
     {
-        StartCoroutine(ShootFireSound());
+        //StartCoroutine(ShootFireSound());
 
         RaycastHit hit;
 
@@ -248,12 +248,14 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
     [PunRPC]
     public void RPC_ShowWin()
     {
+        FindObjectOfType<ControllerA>().SetEndGame();
         winScreen.SetActive(true);
     }
 
     [PunRPC]
     public void RPC_ShowLose()
     {
+        FindObjectOfType<ControllerA>().SetEndGame();
         loseScreen.SetActive(true);
     }
 

@@ -60,11 +60,11 @@ public class ExplosiveBarrel : MonoBehaviourPun, IDamageable
     public void Die()
     {
         animator.SetTrigger("Explode");
-        StartCoroutine(Explode());
     }
 
     public void AnimPlayExplosionSFX()
     {
         source.PlayOneShot(explode);
+        StartCoroutine(Explode());
     }
 }
