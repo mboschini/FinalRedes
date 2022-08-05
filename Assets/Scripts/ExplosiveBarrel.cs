@@ -36,7 +36,7 @@ public class ExplosiveBarrel : MonoBehaviourPun, IDamageable
                     InteractObj.Move(collider.transform.position - transform.position);
                 }
             }
-            PhotonNetwork.Destroy(gameObject);
+            //PhotonNetwork.Destroy(gameObject);
         }
     }
 
