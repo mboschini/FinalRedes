@@ -18,6 +18,7 @@ public class PHServer : MonoBehaviourPunCallbacks
     [SerializeField] Transform _player1pos;
     [SerializeField] Transform _player2pos;
     [SerializeField] Camera _serverCameraPf;
+    private WeatherSystem weatherSystem;
     private bool gameStart = false;
     //diccionario de player que tengo en mi juego,
     //cuando recibo la peticion de cliente(player) en mi diccionario,
@@ -298,9 +299,24 @@ public class PHServer : MonoBehaviourPunCallbacks
         photonView.RPC("RPC_CloseTabScreen", _phServer, player);
     }
 
+    public void RequestSetClimate()
+    {
+        photonView.RPC("RPC_SetClimate", _phServer);
+    }
     #endregion
 
     #region Funciones del server original
+    [PunRPC]
+    public void RPC_SetClimate()
+    {
+        photonView.RPC("RPC_SetClimateToClients", RpcTarget.All, Random.Range(1, 101));
+    }
+
+    [PunRPC]
+    public void RPC_SetClimateToClients(int random)
+    {
+        FindObjectOfType<WeatherSystem>().SetClimate(random);
+    }
 
     [PunRPC]
     public void RPC_Move(Player playerRequest, float dirHorizontal, float dirForward)

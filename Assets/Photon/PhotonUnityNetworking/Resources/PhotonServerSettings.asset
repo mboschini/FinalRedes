@@ -83,6 +83,8 @@ MonoBehaviour:
   - RPC_StartGameForAll
   - RPC_AddPlayerToGame
   - RPC_CreateControlls
+  - RPC_SetClimate
+  - RPC_SetClimateToClients
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
