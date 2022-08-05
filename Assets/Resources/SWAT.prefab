@@ -8652,7 +8652,7 @@ SkinnedMeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 21b447e628b71964e917f0ed83992900, type: 2}
-  - {fileID: 2100000, guid: bbc6a33d0712a634ea9e7400b3fdea2f, type: 2}
+  - {fileID: 2100000, guid: 21b447e628b71964e917f0ed83992900, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -14094,8 +14094,6 @@ MonoBehaviour:
   _speed: 5
   _jumpForce: 5
   _dmg: 10
-  matHead: {fileID: 2100000, guid: bbc6a33d0712a634ea9e7400b3fdea2f, type: 2}
-  matBody: {fileID: 2100000, guid: 21b447e628b71964e917f0ed83992900, type: 2}
   groundCheck: {fileID: 1594130565}
   groundRadius: 0.5
   groundMask:
