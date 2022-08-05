@@ -534,7 +534,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &711054283
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14101,6 +14101,9 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 64
+  DamageableMask:
+    serializedVersion: 2
+    m_Bits: 768
   cameraView: {fileID: 5322984042998861297}
   cameraTransform: {fileID: 2432712870887370923}
   audioListener: {fileID: 5322984042998861298}

@@ -7,26 +7,16 @@ using Photon.Realtime;
 public class ExplosiveBarrel : MonoBehaviourPun, IDamageable
 {
     [SerializeField] float hp;
+    [SerializeField] float dmg;
     [SerializeField] Animator animator;
     [SerializeField] LayerMask PlayerLayer;
-    //[SerializeField] Material myMat;
     [SerializeField] AudioSource source;
     [SerializeField] AudioClip explode;
 
-    //CharacterA _owner; 
-    float dmg = 40f;
-    float timer = 3f;
-
-    void Start()
+    IEnumerator Explode()
     {
-        //source.PlayOneShot(ShootGranade);
-        //StartCoroutine(explodeGranade());
-    }
-
-    public void Explode()
-    {
-        //yield return new WaitForSeconds(timer);
-        //source.PlayOneShot(ExplodeGranade);
+        source.PlayOneShot(explode);
+        yield return new WaitForSeconds(1f);
 
         Collider[] col = Physics.OverlapSphere(transform.position, 7f, PlayerLayer, QueryTriggerInteraction.Ignore);
 
@@ -34,42 +24,26 @@ public class ExplosiveBarrel : MonoBehaviourPun, IDamageable
         {
             foreach(var collider in col)
             {
-                var character = collider.GetComponent<IDamageable>();
- 
-                    character.TakeDamage(dmg);
+                var damageableObj = collider.GetComponent<IDamageable>();
+                if (damageableObj != null)
+                {
+                    damageableObj.TakeDamage(dmg);
+                }
             }
+            PhotonNetwork.Destroy(gameObject);
         }
-
-        PhotonNetwork.Destroy(gameObject);
     }
-
-    //public Granade setOwner(CharacterA owner, Player clientOwner)
-    //{
-    //    _owner = owner;
-    //    photonView.RPC("RPC_setRPCColor", RpcTarget.Others, clientOwner);
-    //    return this;
-    //}
-
-    //[PunRPC]
-    //void RPC_setRPCColor(Player clientOwner)
-    //{
-        //if (PhotonNetwork.LocalPlayer != clientOwner)
-            //myMat.color = Color.red;
-    //}
 
     public void TakeDamage(float amount)
     {
         hp -= amount;
 
-        if (hp < 0)
+        Debug.Log("BARRIL DMG " + hp);
+
+        if (hp <= 0)
         {
             Die();
         }
-    }
-
-    public void PlayExplosionSound()
-    {
-        source.PlayOneShot(explode);
     }
 
     public float GetHP()
@@ -80,5 +54,6 @@ public class ExplosiveBarrel : MonoBehaviourPun, IDamageable
     public void Die()
     {
         animator.SetTrigger("Explode");
+        StartCoroutine(Explode());
     }
 }

@@ -22,6 +22,7 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
     [SerializeField] Transform groundCheck;
     [SerializeField] float groundRadius;
     [SerializeField] LayerMask groundMask;
+    [SerializeField] LayerMask DamageableMask;
     bool isGrounded;
     Vector3 dir;
     float verticalAngle = 0f;
@@ -44,6 +45,7 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
     [SerializeField] AudioSource source;
     [SerializeField] AudioClip ShootRifleSound;
     [SerializeField] AudioClip ExplodeGranade;
+
 
     private void Awake()
     {
@@ -143,7 +145,7 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
 
         source.PlayOneShot(ShootRifleSound, 0.2f);
 
-        if (Physics.Raycast(cameraView.transform.position, cameraView.transform.forward, out hit, Mathf.Infinity, layerMask))
+        if (Physics.Raycast(cameraView.transform.position, cameraView.transform.forward, out hit, Mathf.Infinity, DamageableMask))
         {
             Debug.DrawRay(cameraView.transform.position, cameraView.transform.forward * hit.distance, Color.yellow, 1f);
             Debug.Log("Did Hit " + hit.transform.gameObject.name);

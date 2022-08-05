@@ -48,6 +48,7 @@ MonoBehaviour:
   _lobbyPf: {fileID: 3188015430443563850, guid: 5b4a87de62134924ba2f22a6bfc057bd, type: 3}
   _player1pos: {fileID: 5032088982580506330, guid: 3a375d91efddbfb49b28997ca2be0c36, type: 3}
   _player2pos: {fileID: 7110540590974038688, guid: bbcf467a09eb44244ac5e2cd9acbb914, type: 3}
+  _serverCameraPf: {fileID: 8584535524513897143, guid: ea0d76f793939774ba5b89f55972a023, type: 3}
   playersCheckIn: 0
 --- !u!114 &1162248907406515633
 MonoBehaviour:

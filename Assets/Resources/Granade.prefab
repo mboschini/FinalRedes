@@ -189,12 +189,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddbf10d9e30898f489576f9258488593, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerLayer:
+  DamageLayer:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 768
   myMat: {fileID: 2100000, guid: b1be579651ead4e48b33c4ecf4906551, type: 2}
   source: {fileID: 8695153267598189817}
   ShootGranade: {fileID: 8300000, guid: 0a3d30c46568330469e4db58a94bfd18, type: 3}
+  ExplodeGranade: {fileID: 8300000, guid: 6f9591e5393861f4c8443f3a1ca7ce6d, type: 3}
 --- !u!135 &3794047224516044893
 SphereCollider:
   m_ObjectHideFlags: 0

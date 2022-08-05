@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 496922238182634255}
   - component: {fileID: 311933851438553461}
   - component: {fileID: 299951914367449393}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Fire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4817,7 +4817,7 @@ GameObject:
   - component: {fileID: 496922239261879649}
   - component: {fileID: 311933840632743119}
   - component: {fileID: 299951909470422369}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9691,7 +9691,7 @@ GameObject:
   - component: {fileID: 496922235946272325}
   - component: {fileID: 655670798359468215}
   - component: {fileID: 4522024928913710825}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SmallExplosionEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14343,7 +14343,7 @@ GameObject:
   m_Component:
   - component: {fileID: 498590974363446514}
   - component: {fileID: 498590974363446517}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14438,13 +14438,13 @@ GameObject:
   - component: {fileID: 7219144076129919554}
   - component: {fileID: 5302318782093571452}
   - component: {fileID: 2694593003404619327}
-  - component: {fileID: 3794047224516044893}
   - component: {fileID: 8695153267598189817}
   - component: {fileID: 248439348170925841}
   - component: {fileID: 4780569681618335614}
   - component: {fileID: 8289174321292536075}
   - component: {fileID: 8200775084514585395}
-  m_Layer: 0
+  - component: {fileID: 260028759240852863}
+  m_Layer: 9
   m_Name: ExplodingBarrel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14516,25 +14516,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 100
+  dmg: 40
   animator: {fileID: 7219144076129919554}
   PlayerLayer:
     serializedVersion: 2
     m_Bits: 256
   source: {fileID: 8695153267598189817}
   explode: {fileID: 8300000, guid: 6f9591e5393861f4c8443f3a1ca7ce6d, type: 3}
---- !u!135 &3794047224516044893
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1561497532965228065}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.83212286
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!82 &8695153267598189817
 AudioSource:
   m_ObjectHideFlags: 0
@@ -14726,6 +14714,19 @@ MonoBehaviour:
   m_SynchronizeLayers:
   - SynchronizeType: 2
     LayerIndex: 0
+--- !u!65 &260028759240852863
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1561497532965228065}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1.4219179, z: 1}
+  m_Center: {x: 0, y: 0.723827, z: 0}
 --- !u!1 &6952608417871351797
 GameObject:
   m_ObjectHideFlags: 0
@@ -14737,7 +14738,7 @@ GameObject:
   - component: {fileID: 6949363159219394529}
   - component: {fileID: 7115761019725067099}
   - component: {fileID: 7115072170744495273}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19611,7 +19612,7 @@ GameObject:
   - component: {fileID: 6949363157223041377}
   - component: {fileID: 7115761020996652295}
   - component: {fileID: 7115072167413954461}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: FlamesParticleEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24232,7 +24233,7 @@ GameObject:
   - component: {fileID: 6949363156997170018}
   - component: {fileID: 7115761019279344256}
   - component: {fileID: 7115072172015643250}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: FireEmbers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28958,7 +28959,7 @@ GameObject:
   - component: {fileID: 6949363158182268512}
   - component: {fileID: 7115761019072082756}
   - component: {fileID: 7115072168267733716}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SmokeEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33541,7 +33542,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6949363160347124138}
   - component: {fileID: 6989758608289198898}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Point light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33635,7 +33636,7 @@ GameObject:
   - component: {fileID: 6949363160031213031}
   - component: {fileID: 7115761020602651813}
   - component: {fileID: 7115072168041839043}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: FireEmbers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38359,7 +38360,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6953325845311978594}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: FireParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38392,7 +38393,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6953325845765529223}
   - component: {fileID: 6953325845765529220}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Light (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38486,7 +38487,7 @@ GameObject:
   - component: {fileID: 8268391088634377705}
   - component: {fileID: 6395698394035298828}
   - component: {fileID: 4069536277744823989}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: FireEmbers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43266,6 +43267,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2224880570104206491}
     m_Modifications:
+    - target: {fileID: -9035785209522947747, guid: 2a226c37837bdd743a33745077d5c428, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2a226c37837bdd743a33745077d5c428, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -43334,9 +43339,29 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.398
       objectReference: {fileID: 0}
+    - target: {fileID: -3500922653780914920, guid: 2a226c37837bdd743a33745077d5c428, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -2750576666303933492, guid: 2a226c37837bdd743a33745077d5c428, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -1938982658825670194, guid: 2a226c37837bdd743a33745077d5c428, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 249488935275217246, guid: 2a226c37837bdd743a33745077d5c428, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 2a226c37837bdd743a33745077d5c428, type: 3}
       propertyPath: m_Name
       value: barrel
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2a226c37837bdd743a33745077d5c428, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 2363910219697578080, guid: 2a226c37837bdd743a33745077d5c428, type: 3}
       propertyPath: m_LocalPosition.x
@@ -43345,6 +43370,10 @@ PrefabInstance:
     - target: {fileID: 2363910219697578080, guid: 2a226c37837bdd743a33745077d5c428, type: 3}
       propertyPath: m_LocalPosition.z
       value: -0.074
+      objectReference: {fileID: 0}
+    - target: {fileID: 2926494785058027771, guid: 2a226c37837bdd743a33745077d5c428, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 2926494785058027771, guid: 2a226c37837bdd743a33745077d5c428, type: 3}
       propertyPath: m_IsActive
@@ -43366,6 +43395,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.506
       objectReference: {fileID: 0}
+    - target: {fileID: 5155684475592373624, guid: 2a226c37837bdd743a33745077d5c428, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 7514788282502072315, guid: 2a226c37837bdd743a33745077d5c428, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.02
@@ -43373,6 +43406,10 @@ PrefabInstance:
     - target: {fileID: 7514788282502072315, guid: 2a226c37837bdd743a33745077d5c428, type: 3}
       propertyPath: m_LocalPosition.z
       value: -0.046
+      objectReference: {fileID: 0}
+    - target: {fileID: 7598419493678936200, guid: 2a226c37837bdd743a33745077d5c428, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 7598419493678936200, guid: 2a226c37837bdd743a33745077d5c428, type: 3}
       propertyPath: m_IsActive

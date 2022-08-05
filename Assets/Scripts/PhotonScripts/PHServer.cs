@@ -17,7 +17,8 @@ public class PHServer : MonoBehaviourPunCallbacks
     [SerializeField] LobbyManager _lobbyPf;
     [SerializeField] Transform _player1pos;
     [SerializeField] Transform _player2pos;
-
+    [SerializeField] Camera _serverCameraPf;
+    private bool gameStart = false;
     //diccionario de player que tengo en mi juego,
     //cuando recibo la peticion de cliente(player) en mi diccionario,
     //si es asi tomo al character que lo representa y lo muevo
@@ -68,14 +69,27 @@ public class PHServer : MonoBehaviourPunCallbacks
     [PunRPC]
     void RPC_StartGame()
     {
+        gameStart = true;
         PhotonNetwork.LoadLevel("GameScene");
 
-        if(PhotonNetwork.LocalPlayer == _phServer)
+        if (PhotonNetwork.LocalPlayer == _phServer)
+        {
             PhotonNetwork.CurrentRoom.IsOpen = false;
+            StartCoroutine(createCamera());
+        }
         else
         {
             photonView.RPC("RPC_AddPlayerToGame", _phServer, PhotonNetwork.LocalPlayer);
         }
+    }
+
+    IEnumerator createCamera()
+    {
+        while (PhotonNetwork.LevelLoadingProgress > 0.9f)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+        Instantiate(_serverCameraPf, this.transform);
     }
 
     [PunRPC]
@@ -108,11 +122,14 @@ public class PHServer : MonoBehaviourPunCallbacks
     [PunRPC]
     void RPC_RequestUpdatePlayerList()
     {
-        List<Player> aux = _PlayersInLobby.Select(x=> x.Key).ToList();
-
-        foreach (var player in _PlayersInLobby)
+        if (!gameStart)
         {
-            player.Value.PlayerListUpdate();
+            List<Player> aux = _PlayersInLobby.Select(x=> x.Key).ToList();
+
+            foreach (var player in _PlayersInLobby)
+            {
+                player.Value?.PlayerListUpdate();
+            }
         }
     }
 
@@ -199,23 +216,22 @@ public class PHServer : MonoBehaviourPunCallbacks
             yield return new WaitForEndOfFrame();
         }
 
-        //se ejecuta en el servidor original, por lo que se puede tener un manager que gestione las posiciones
-        //de todos los players y se llamaria desde aca.
-        if (_dictionaryModels.Count % 2 == 0)
-        {
-            CharacterA newCharacter = PhotonNetwork.Instantiate(_characterPrefab.name, _player1pos.position, _player1pos.rotation)
-                                                                .GetComponent<CharacterA>()
-                                                                .SetInitialParams(newPlayer);
-            _dictionaryModels.Add(newPlayer, newCharacter);
-        }
-        else
-        {
-            CharacterA newCharacter = PhotonNetwork.Instantiate(_characterPrefab.name, _player2pos.position, _player2pos.rotation)
-                                                                .GetComponent<CharacterA>()
-                                                                .SetInitialParams(newPlayer);
-            _dictionaryModels.Add(newPlayer, newCharacter);
-        }
-
+            //se ejecuta en el servidor original, por lo que se puede tener un manager que gestione las posiciones
+            //de todos los players y se llamaria desde aca.
+            if (_dictionaryModels.Count % 2 == 0)
+            {
+                CharacterA newCharacter = PhotonNetwork.Instantiate(_characterPrefab.name, _player1pos.position, _player1pos.rotation)
+                                                                    .GetComponent<CharacterA>()
+                                                                    .SetInitialParams(newPlayer);
+                _dictionaryModels.Add(newPlayer, newCharacter);
+            }
+            else
+            {
+                CharacterA newCharacter = PhotonNetwork.Instantiate(_characterPrefab.name, _player2pos.position, _player2pos.rotation)
+                                                                    .GetComponent<CharacterA>()
+                                                                    .SetInitialParams(newPlayer);
+                _dictionaryModels.Add(newPlayer, newCharacter);
+            }
     }
 
     [PunRPC]
@@ -282,9 +298,9 @@ public class PHServer : MonoBehaviourPunCallbacks
         photonView.RPC("RPC_CloseTabScreen", _phServer, player);
     }
 
-#endregion
+    #endregion
 
-#region Funciones del server original
+    #region Funciones del server original
 
     [PunRPC]
     public void RPC_Move(Player playerRequest, float dirHorizontal, float dirForward)

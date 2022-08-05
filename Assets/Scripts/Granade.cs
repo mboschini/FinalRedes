@@ -6,11 +6,12 @@ using Photon.Realtime;
 
 public class Granade : MonoBehaviourPun
 {
-    [SerializeField] LayerMask PlayerLayer;
+    [SerializeField] LayerMask DamageLayer;
     [SerializeField] Material myMat;
     [SerializeField] AudioSource source;
     [SerializeField] AudioClip ShootGranade;
-    
+    [SerializeField] AudioClip ExplodeGranade;
+
     CharacterA _owner; 
     float dmg = 40f;
     float timer = 3f;
@@ -23,24 +24,24 @@ public class Granade : MonoBehaviourPun
 
     IEnumerator explodeGranade()
     {
+        source.PlayOneShot(ExplodeGranade);
         yield return new WaitForSeconds(timer);
-        //source.PlayOneShot(ExplodeGranade);
 
-        Collider[] col = Physics.OverlapSphere(transform.position, 7f, PlayerLayer, QueryTriggerInteraction.Ignore);
+        Collider[] col = Physics.OverlapSphere(transform.position, 7f, DamageLayer, QueryTriggerInteraction.Ignore);
 
         if (photonView.IsMine)
         {
             foreach(var collider in col)
             {
-                var character = collider.GetComponent<CharacterA>();
-                if(character && character != _owner)
+                var damageableObj = collider.GetComponent<IDamageable>();
+                if (damageableObj != null)
                 {
-                    character.TakeDamage(dmg);
+                    damageableObj.TakeDamage(dmg);
                 }
             }
-        }
 
-        PhotonNetwork.Destroy(gameObject);
+            PhotonNetwork.Destroy(gameObject);
+        }
     }
 
     public Granade setOwner(CharacterA owner, Player clientOwner)
