@@ -185,6 +185,13 @@ public class Launcher : MonoBehaviourPunCallbacks
         LobbyUI.SetActive(false);
         MainMenuUI.SetActive(true);
         CreateRoomButton.interactable = true;
+
+        foreach (var obj in roomListObjs)
+        {
+            Destroy(obj.gameObject);
+        }
+        roomListObjs.Clear();
+
         PhotonNetwork.Disconnect();
     }
 
