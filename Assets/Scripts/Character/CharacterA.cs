@@ -46,11 +46,10 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
     [SerializeField] AudioClip ShootRifleSound;
     [SerializeField] AudioClip ExplodeGranade;
 
-
     private void Awake()
     {
-        matHead.color = Color.red;
         matBody.color = Color.red;
+        matHead.color = Color.red;
     }
 
     //se ejecuta en el servidor original y llama por el rpc al cliente local
@@ -62,7 +61,7 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
         matBody.color = Color.yellow;
         dir = new Vector3();
         photonView.RPC("SetLocalParams", _owner, _currentLife);
-        photonView.RPC("RPC_PlayerRPCColor", RpcTarget.Others, _owner);
+        photonView.RPC("RPC_setRPCPlayerColor", RpcTarget.Others, player);
         return this;
     }
 
@@ -82,7 +81,7 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
     }
 
     [PunRPC]
-    void RPC_PlayerRPCColor(Player clientOwner)
+    void RPC_setRPCPlayerColor(Player clientOwner)
     {
         if (PhotonNetwork.LocalPlayer != clientOwner)
         {
@@ -208,11 +207,6 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
         {
             Die();
         }
-        /*
-        else
-        {
-            photonView.RPC("RPC_LifeChange", _owner, _currentLife);
-        }*/
     }
 
     public void Die()
@@ -269,12 +263,6 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
     {
         Application.Quit();
     }
-    /*
-    [PunRPC]
-    void RPC_LifeChange(float _currentlife)
-    {
-        _currentLife = _currentlife;
-    }*/
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {

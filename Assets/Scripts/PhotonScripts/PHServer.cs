@@ -454,6 +454,11 @@ public class PHServer : MonoBehaviourPunCallbacks
         if(_dictionaryModels[player] != null)
             PhotonNetwork.Destroy(_dictionaryModels[player].gameObject);
         _dictionaryModels.Remove(player);
+
+        if(_dictionaryModels.Count() <= 0)
+        {
+            PhotonNetwork.Disconnect();
+        }
     }
     #endregion
 }

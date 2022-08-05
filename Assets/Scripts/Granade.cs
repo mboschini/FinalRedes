@@ -53,6 +53,7 @@ public class Granade : MonoBehaviourPun
     public Granade setOwner(CharacterA owner, Player clientOwner)
     {
         _owner = owner;
+        myMat.color = Color.blue;
         photonView.RPC("RPC_setRPCColor", RpcTarget.Others, clientOwner);
         return this;
     }
@@ -62,5 +63,7 @@ public class Granade : MonoBehaviourPun
     {
         if (PhotonNetwork.LocalPlayer != clientOwner)
             myMat.color = Color.red;
+        else
+            myMat.color = Color.blue;
     }
 }
