@@ -17,8 +17,7 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
     [SerializeField] float _jumpForce;
     [SerializeField] float _dmg;
 
-    [SerializeField] Material matHead;
-    [SerializeField] Material matBody;
+    Material _MyMat;
     [SerializeField] Transform groundCheck;
     [SerializeField] float groundRadius;
     [SerializeField] LayerMask groundMask;
@@ -48,8 +47,8 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
 
     private void Awake()
     {
-        matBody.color = Color.red;
-        matHead.color = Color.red;
+        _MyMat = GetComponentInChildren<Renderer>().material;
+        _MyMat.color = Color.red;
     }
 
     //se ejecuta en el servidor original y llama por el rpc al cliente local
@@ -57,11 +56,10 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
     {
         _owner = player;
         _currentLife = _maxLife;
-        matHead.color = Color.yellow;
-        matBody.color = Color.yellow;
+        _MyMat.color = Color.yellow;
         dir = new Vector3();
         photonView.RPC("SetLocalParams", _owner, _currentLife);
-        photonView.RPC("RPC_setRPCPlayerColor", RpcTarget.Others, player);
+        //photonView.RPC("RPC_setRPCPlayerColor", RpcTarget.Others, player);
         return this;
     }
 
@@ -76,10 +74,10 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
         audioListener.enabled = true;
         canvas.SetActive(true);
 
-        matHead.color = Color.blue;
-        matBody.color = Color.blue;
+        _MyMat.color = Color.blue;
+        //matBody.color = Color.blue;
     }
-
+    /*
     [PunRPC]
     void RPC_setRPCPlayerColor(Player clientOwner)
     {
@@ -93,7 +91,7 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
             matHead.color = Color.blue;
             matBody.color = Color.blue;
         }
-    }
+    }*/
 
     public void Move(float dirHorizontal, float dirForward)
     {
