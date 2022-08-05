@@ -15,19 +15,25 @@ public class ExplosiveBarrel : MonoBehaviourPun, IDamageable
 
     IEnumerator Explode()
     {
-        source.PlayOneShot(explode);
-        yield return new WaitForSeconds(1f);
-
-        Collider[] col = Physics.OverlapSphere(transform.position, 7f, PlayerLayer, QueryTriggerInteraction.Ignore);
-
         if (photonView.IsMine)
         {
+            source.PlayOneShot(explode);
+            yield return new WaitForSeconds(1f);
+
+            Collider[] col = Physics.OverlapSphere(transform.position, 7f, PlayerLayer, QueryTriggerInteraction.Ignore);
+
             foreach(var collider in col)
             {
                 var damageableObj = collider.GetComponent<IDamageable>();
                 if (damageableObj != null)
                 {
                     damageableObj.TakeDamage(dmg);
+                }
+
+                var InteractObj = collider.GetComponent<IInteractable>();
+                if (InteractObj != null)
+                {
+                    InteractObj.Move(collider.transform.position - transform.position);
                 }
             }
             PhotonNetwork.Destroy(gameObject);

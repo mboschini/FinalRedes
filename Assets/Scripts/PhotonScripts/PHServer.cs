@@ -308,10 +308,26 @@ public class PHServer : MonoBehaviourPunCallbacks
     {
         photonView.RPC("RPC_RequestPlayGoalSound", _phServer);
     }
+
+    public void RequestMoveBall(Vector3 dir)
+    {
+        photonView.RPC("RPC_MoveBall", _phServer, dir);
+    }
     #endregion
 
     #region Funciones del server original
-    
+    [PunRPC]
+    public void RPC_MoveBall(Vector3 dir)
+    {
+        photonView.RPC("RPC_ClientsMoveBall", RpcTarget.All, dir);
+    }
+
+    [PunRPC]
+    public void RPC_ClientsMoveBall(Vector3 dir)
+    {
+        FindObjectOfType<ball>().MoveTo(dir);
+    }
+
     [PunRPC]
     public void RPC_RequestPlayGoalSound()
     {

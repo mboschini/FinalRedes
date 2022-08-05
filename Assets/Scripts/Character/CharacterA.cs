@@ -137,8 +137,6 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
 
     public void Shoot()
     {
-        int layerMask = 1 << 8;
-
         RaycastHit hit;
 
         _anim.SetBool("isShooting", true);
@@ -154,6 +152,12 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
             {
                 hit.transform.gameObject.GetComponent<IDamageable>().TakeDamage(_dmg);
             }
+
+            if (hit.transform.gameObject.GetComponent<IInteractable>() != null)
+            {
+                hit.transform.gameObject.GetComponent<IInteractable>().Move(hit.point - cameraView.transform.position);
+            }
+
         }
         else
         {

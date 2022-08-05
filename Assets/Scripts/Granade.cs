@@ -38,6 +38,12 @@ public class Granade : MonoBehaviourPun
                 {
                     damageableObj.TakeDamage(dmg);
                 }
+
+                var InteractObj = collider.GetComponent<IInteractable>();
+                if (InteractObj != null)
+                {
+                    InteractObj.Move(collider.transform.position - transform.position);
+                }
             }
 
             PhotonNetwork.Destroy(gameObject);

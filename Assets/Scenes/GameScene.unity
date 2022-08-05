@@ -19128,6 +19128,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Football
       objectReference: {fileID: 0}
+    - target: {fileID: 3964498869871453303, guid: 1d10f2d0925a52b4b8461d7839cda158, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 3964498869871453305, guid: 1d10f2d0925a52b4b8461d7839cda158, type: 3}
       propertyPath: sceneViewId
       value: 8
@@ -19188,11 +19192,24 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7257967336448902020, guid: 1d10f2d0925a52b4b8461d7839cda158, type: 3}
+      propertyPath: rb
+      value: 
+      objectReference: {fileID: 1573449155}
+    - target: {fileID: 7257967336448902020, guid: 1d10f2d0925a52b4b8461d7839cda158, type: 3}
+      propertyPath: force
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d10f2d0925a52b4b8461d7839cda158, type: 3}
 --- !u!4 &1573449154 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4345808830598250189, guid: 1d10f2d0925a52b4b8461d7839cda158, type: 3}
+  m_PrefabInstance: {fileID: 1573449153}
+  m_PrefabAsset: {fileID: 0}
+--- !u!54 &1573449155 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 3964498869871453307, guid: 1d10f2d0925a52b4b8461d7839cda158, type: 3}
   m_PrefabInstance: {fileID: 1573449153}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1577736948
