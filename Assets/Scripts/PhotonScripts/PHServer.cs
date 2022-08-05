@@ -303,9 +303,27 @@ public class PHServer : MonoBehaviourPunCallbacks
     {
         photonView.RPC("RPC_SetClimate", _phServer);
     }
+
+    public void RequestPlayGoalSound()
+    {
+        photonView.RPC("RPC_RequestPlayGoalSound", _phServer);
+    }
     #endregion
 
     #region Funciones del server original
+    
+    [PunRPC]
+    public void RPC_RequestPlayGoalSound()
+    {
+        photonView.RPC("RPC_ClientsPlayGoalSound", RpcTarget.All);
+    }
+
+    [PunRPC]
+    public void RPC_ClientsPlayGoalSound()
+    {
+        FindObjectOfType<Goal>().GoalSound();
+    }
+
     [PunRPC]
     public void RPC_SetClimate()
     {

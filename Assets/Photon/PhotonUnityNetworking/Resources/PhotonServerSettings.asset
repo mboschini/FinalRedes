@@ -85,6 +85,8 @@ MonoBehaviour:
   - RPC_CreateControlls
   - RPC_SetClimate
   - RPC_SetClimateToClients
+  - RPC_ClientsPlayGoalSound
+  - RPC_RequestPlayGoalSound
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
