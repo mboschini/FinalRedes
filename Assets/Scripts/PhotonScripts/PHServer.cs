@@ -73,6 +73,11 @@ public class PHServer : MonoBehaviourPunCallbacks
         gameStart = true;
         PhotonNetwork.LoadLevel("GameScene");
 
+        while (PhotonNetwork.LevelLoadingProgress > 0.9f)
+        {
+            
+        }
+
         if (PhotonNetwork.LocalPlayer == _phServer)
         {
             PhotonNetwork.CurrentRoom.IsOpen = false;
@@ -80,6 +85,7 @@ public class PHServer : MonoBehaviourPunCallbacks
         }
         else
         {
+            Debug.Log("inicio juego a " + PhotonNetwork.LocalPlayer.NickName);
             photonView.RPC("RPC_AddPlayerToGame", _phServer, PhotonNetwork.LocalPlayer);
         }
     }
@@ -131,6 +137,15 @@ public class PHServer : MonoBehaviourPunCallbacks
             {
                 player.Value?.PlayerListUpdate();
             }
+        }
+    }
+
+    [PunRPC]
+    void RPC_RequestShowLoadingScreen()
+    {
+        foreach (var player in _PlayersInLobby)
+        {
+            player.Value._localLauncher.ShowLoadingScreen();
         }
     }
 
@@ -209,13 +224,18 @@ public class PHServer : MonoBehaviourPunCallbacks
         photonView.RPC("RPC_RequestUpdatePlayerList", _phServer);
     }
 
+    public void RequestShowLoadingScreen()
+    {
+        photonView.RPC("RPC_RequestShowLoadingScreen", _phServer);
+    }
 
     IEnumerator waitForLevel(Player newPlayer)
     {
-        while (PhotonNetwork.LevelLoadingProgress > 0.9f)
-        {
+        //while (PhotonNetwork.LevelLoadingProgress > 0.9f)
+        //{
             yield return new WaitForEndOfFrame();
-        }
+        //}
+        
 
             //se ejecuta en el servidor original, por lo que se puede tener un manager que gestione las posiciones
             //de todos los players y se llamaria desde aca.
@@ -331,7 +351,7 @@ public class PHServer : MonoBehaviourPunCallbacks
     [PunRPC]
     public void RPC_RequestPlayGoalSound()
     {
-        photonView.RPC("RPC_ClientsPlayGoalSound", RpcTarget.All);
+        photonView.RPC("RPC_ClientsPlayGoalSound", RpcTarget.Others);
     }
 
     [PunRPC]

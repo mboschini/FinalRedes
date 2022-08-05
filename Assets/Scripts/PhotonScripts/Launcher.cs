@@ -17,6 +17,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     public GameObject LobbyUI;
     public GameObject RoomUI;
     public GameObject MainMenuUI;
+    public GameObject LoadingScreenUI;
     public Button StartButton;
     public Button LeaveRoomButton;
     public Button CreateRoomButton;
@@ -207,7 +208,13 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public void BTN_StartGame()
     {
+        PHServer.serverInstance.RequestShowLoadingScreen();
         PHServer.serverInstance.RequestStartGame();
+    }
+
+    public void ShowLoadingScreen()
+    {
+        LoadingScreenUI.SetActive(true);
     }
 
     public void ToogleStartGame(bool toogle)

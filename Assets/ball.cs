@@ -14,7 +14,7 @@ public class ball : MonoBehaviour, IInteractable
 
     public void MoveTo(Vector3 Direction)
     {
-        rb.AddForce(Direction * force, ForceMode.Acceleration);
+        rb.AddForce(Direction * force, ForceMode.VelocityChange);
     }
 
 }

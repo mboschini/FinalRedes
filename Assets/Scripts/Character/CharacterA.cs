@@ -137,11 +137,11 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
 
     public void Shoot()
     {
+        StartCoroutine(ShootFireSound());
+
         RaycastHit hit;
 
         _anim.SetBool("isShooting", true);
-
-        source.PlayOneShot(ShootRifleSound, 0.2f);
 
         if (Physics.Raycast(cameraView.transform.position, cameraView.transform.forward, out hit, Mathf.Infinity, DamageableMask))
         {
@@ -166,6 +166,12 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
         }
     }
 
+    IEnumerator ShootFireSound()
+    {
+        source.PlayOneShot(ShootRifleSound);
+        yield return new WaitForSeconds(0.1f);
+    }
+
     public void ShootGranade()
     {
         var ammo = PhotonNetwork.Instantiate(_granadePrefab.name, _granadeSpawner.position, _granadeSpawner.rotation)
@@ -183,7 +189,7 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
         source.PlayOneShot(ExplodeGranade,1f);
     }
 
-        public void StopShooting()
+    public void StopShooting()
     {
         _anim.SetBool("isShooting", false);
     }

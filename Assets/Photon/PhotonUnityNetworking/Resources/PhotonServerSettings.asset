@@ -89,6 +89,7 @@ MonoBehaviour:
   - RPC_RequestPlayGoalSound
   - RPC_ClientsMoveBall
   - RPC_MoveBall
+  - RPC_RequestShowLoadingScreen
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
