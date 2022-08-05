@@ -168,8 +168,13 @@ public class CharacterA : MonoBehaviourPun, IPunObservable, IDamageable
 
     IEnumerator ShootFireSound()
     {
-        source.PlayOneShot(ShootRifleSound);
+        //source.PlayOneShot(ShootRifleSound);
         yield return new WaitForSeconds(0.1f);
+    }
+
+    public void AnimShootSound()
+    {
+        source.PlayOneShot(ShootRifleSound);
     }
 
     public void ShootGranade()
